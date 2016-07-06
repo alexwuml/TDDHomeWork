@@ -71,33 +71,23 @@ namespace SalesOrder
             }
         }
 
-        public int[] GetTotalCostbyGroup(int v, List<SalesOrder> solist)
-        {
-            int[] rtnCost = new int[(solist.Count / v) + 1];
-            int i = 0;
-            foreach (var item in solist.GroupBy(a => Math.Truncate((double)(int.Parse(a.Salesorderno) - 1) / v)))
-            {
-
-                rtnCost[i] = item.Sum(so => so.Cost);
-                i++;
-            }
-
-            return rtnCost;
-        }
-
-        public int[] GetTotalRevenuebyGroup(int v, List<SalesOrder> solist)
+        public int[] GetTotalFieldSumbyGroup(int v, List<SalesOrder> solist,string sFieldName)
         {
             int[] rtnRevenue = new int[(solist.Count / v) + 1];
             int i = 0;
             foreach (var item in solist.GroupBy(a => Math.Truncate((double)(int.Parse(a.Salesorderno) - 1) / v)))
             {
-
-                rtnRevenue[i] = item.Sum(so => so.Revenue);
+                int iFieldSum = 0;
+                foreach (var soitem in item)
+                {
+                    iFieldSum = iFieldSum+ int.Parse(soitem.GetType().GetProperty(sFieldName).GetValue(soitem).ToString());
+                }
+                rtnRevenue[i] = iFieldSum;
                 i++;
             }
 
             return rtnRevenue;
         }
-         
+
     }
 }
